@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="芙兰朵露桌面宠物：9组动画、16个目光方向，支持鼠标跟随预览与皮肤下载。">
+<title>芙兰朵露 · 桌面宠物预览</title>
+<style>
+:root{color-scheme:dark;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;color:#fcecf0;background:#170f17}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:28px;background:radial-gradient(ellipse at 50% 15%,#492035,transparent 65%),#170f17}main{width:min(760px,100%)}.eyebrow{color:#eab8aa;font-size:12px;letter-spacing:.22em}h1{font-size:36px;margin:10px 0}p{color:#cbb4c0;line-height:1.8}.stage{height:440px;display:grid;place-items:center;position:relative;border:1px solid #68404e;border-radius:24px;background:radial-gradient(ellipse at center,#624350,#332632 68%);overflow:hidden;touch-action:none}.stage.light{background:radial-gradient(ellipse at center,#fffbf1,#e9d7cf 72%)}.sprite{width:192px;height:208px;background-image:url('flandre-pet/spritesheet.webp');background-size:1536px 2288px;background-repeat:no-repeat;transform:scale(1.65);image-rendering:auto}.controls{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}button,select{font:inherit;font-size:14px;border:1px solid #805663;border-radius:12px;padding:11px 15px;color:#ffeef3;background:#39202d;cursor:pointer}button:hover,select:hover{background:#53303c}button[aria-pressed=true]{background:#963f52;border-color:#dc8497}select{min-width:150px}.note{font-size:13px}.badge{position:absolute;left:18px;bottom:15px;color:#dbb8c3;font-size:12px}.light .badge{color:#664d57}a{color:#efa8bb}.error{display:none;color:#ffbbbf}.error.show{display:block}@media(max-width:480px){body{padding:18px}h1{font-size:29px}.stage{height:380px}.sprite{transform:scale(1.4)}}
+</style>
+<main>
+ <div class="eyebrow">SCARLET COMPANION</div>
+ <h1>芙兰朵露 · 桌面伙伴</h1>
+ <p>红白洋装、金色短发，还有轻轻摇动的七彩晶翼。<br><span class="note">9 组动作与 16 个目光方向。桌面宠物皮肤已制作完成。</span></p>
+ <div class="stage" id="stage" aria-label="宠物动作预览区域"><div class="sprite" id="sprite" role="img" aria-label="芙兰朵露动画"></div><span class="badge" id="badge">待机 · 眨眼</span></div>
+ <div class="controls">
+  <select id="state" aria-label="选择动作"><option value="idle">待机 · 眨眼</option><option value="running-right">向右移动</option><option value="running-left">向左移动</option><option value="waving">挥手打招呼</option><option value="jumping">轻轻跳跃</option><option value="failed">有点沮丧</option><option value="waiting">等待你的回应</option><option value="running">认真思考</option><option value="review">仔细查看</option></select>
+  <button id="pause" aria-pressed="false">暂停动画</button>
+  <button id="follow" aria-pressed="false">跟随鼠标</button>
+  <button id="backdrop">切换浅色背景</button>
+ </div>
+ <p class="note">打开“跟随鼠标”，在预览区域移动指针，就能查看不同方向的目光。<br>这里可以直接试玩动画。安装到桌面应用后，动作会随任务状态变化。</p>
+ <p class="error" id="error">未找到皮肤文件。请保持 index.html 与 flandre-pet 文件夹在同一目录。</p>
+ <p class="note"><a href="flandre-main.png">查看角色主图</a> · <a href="flandre-pet.zip">保存皮肤包</a></p>
+</main>
+<script>
+const states={idle:[0,[280,110,110,140,140,320]],'running-right':[1,[120,120,120,120,120,120,120,220]],'running-left':[2,[120,120,120,120,120,120,120,220]],waving:[3,[140,140,140,280]],jumping:[4,[140,140,140,140,280]],failed:[5,[140,140,140,140,140,140,140,240]],waiting:[6,[150,150,150,150,150,260]],running:[7,[120,120,120,120,120,220]],review:[8,[150,150,150,150,150,280]]};
+const el=id=>document.getElementById(id),sprite=el('sprite'),stage=el('stage');let frame=0,last=0,paused=matchMedia('(prefers-reduced-motion: reduce)').matches,follow=false,look=null;
+function draw(row,col){sprite.style.backgroundPosition=`${-192*col}px ${-208*row}px`}
+function pauseLabel(){el('pause').textContent=paused?'播放动画':'暂停动画';el('pause').setAttribute('aria-pressed',String(paused))}pauseLabel();
+el('state').onchange=()=>{frame=0;last=0;look=null;el('badge').textContent=el('state').selectedOptions[0].textContent;draw(states[el('state').value][0],0)};
+el('pause').onclick=()=>{paused=!paused;last=0;pauseLabel()};
+el('follow').onclick=()=>{follow=!follow;look=null;el('follow').setAttribute('aria-pressed',String(follow));el('follow').textContent=follow?'已开启目光跟随':'跟随鼠标'};
+el('backdrop').onclick=()=>{const light=stage.classList.toggle('light');el('backdrop').textContent=light?'切换深色背景':'切换浅色背景'};
+stage.onpointermove=e=>{if(!follow)return;const r=sprite.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height*.3);look=Math.hypot(dx,dy)<28?null:Math.round((Math.atan2(dx,-dy)+Math.PI*2)%(Math.PI*2)/(Math.PI/8))%16};stage.onpointerleave=()=>{look=null};
+function tick(t){const [row,durations]=states[el('state').value];if(look!==null&&follow){draw(9+Math.floor(look/8),look%8);last=t}else{if(!last)last=t;if(!paused&&t-last>=durations[frame]){frame=(frame+1)%durations.length;last=t}draw(row,frame)}requestAnimationFrame(tick)}
+const asset=new Image();asset.onerror=()=>el('error').classList.add('show');asset.src='flandre-pet/spritesheet.webp';requestAnimationFrame(tick);
+</script>
+</html>
