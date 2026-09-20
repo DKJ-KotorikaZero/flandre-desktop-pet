@@ -25,27 +25,6 @@
 
 待机眨眼、向右移动、向左移动、挥手、跳跃、沮丧、等待、思考和查看；另外包含十六个方向的目光。
 
-## GitHub Pages
-
-上传这些文件后，在仓库 **Settings → Pages** 中选择：
-
-- Source：**Deploy from a branch**
-- Branch：仓库的默认分支
-- Folder：**/(root)**
-
-保存后，GitHub 会提供网页地址。此项目是静态网页，无需安装依赖或填写 API 密钥。
-
-[GitHub Pages 发布说明](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
-
-## 在个人主页展示动画
-
-将 `idle.gif` 一并放入你的个人主页仓库，在现有 README 中添加以下内容：
-
-```markdown
-![芙兰朵露桌面宠物](./idle.gif)
-```
-
-支持个人主页 README 的账号，可以使用与用户名同名的公开仓库显示该 README。[GitHub 个人主页说明](https://docs.github.com/en/account-and-profile/how-tos/profile-customization/managing-your-profile-readme)
 
 ## 文件
 
